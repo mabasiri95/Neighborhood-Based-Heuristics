@@ -11,8 +11,8 @@
 
 #-----------------------------------------------------------------------------
 
-#Student name:
-#Date: 
+#Student name: Mohammad Amin Basiri
+#Date: 04/01/2023
 
 
 #need some python libraries
