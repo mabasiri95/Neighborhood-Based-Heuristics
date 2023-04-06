@@ -73,19 +73,37 @@ def evaluate(x):
        
 #here is a simple function to create a neighborhood
 #1-flip neighborhood of solution x         
+# def neighborhood(x):
+        
+#     nbrhood = []     
+    
+#     for i in range(0,len(x)):
+#         nbrhood.append(x[:])
+#         if nbrhood[i][i] == 1:
+#             nbrhood[i][i] = 0
+#         else:
+#             nbrhood[i][i] = 1
+      
+#     return nbrhood
+          
+
 def neighborhood(x):
         
     nbrhood = []     
     
-    for i in range(0,n):
-        nbrhood.append(x[:])
-        if nbrhood[i][i] == 1:
-            nbrhood[i][i] = 0
-        else:
-            nbrhood[i][i] = 1
+    for i in range(0,len(x)):
+        if x[i] == 0: #picking stuff
+            temp = x[:];
+            temp[i] = 1
+            nbrhood.append(temp[:])
+            for j in range(0,len(x)):
+                if j != i:
+                    if temp[j] == 1: # dropping stuff
+                        temp1 = temp[:]
+                        temp1[j] = 0
+                        nbrhood.append(temp1[:])
       
     return nbrhood
-          
 
 
 #create the initial solution
@@ -101,7 +119,7 @@ def initial_solution(n, weights, maxWeight):
     while not done:
         prevx = x[:]    # stores previous iterations solution
         #index = myPRNG.randint(0,n)
-        index = random.randint(0,n)
+        index = random.randint(0,n-1)
         x[index] = 1
         # check weights
         solnWeight = np.dot(np.array(x), np.array(weights))
@@ -135,22 +153,14 @@ def bestImprovement():
         Neighborhood = neighborhood(x_curr)   #create a list of all neighbors in the neighborhood of x_curr
         
         for s in Neighborhood:                #evaluate every member in the neighborhood of x_curr
-            solutionsChecked = solutionsChecked + 1
             currEval = evaluate(s)[:]
             #print(currEval)
             if currEval[0] > f_best[0]:  # solution is feasible   
                 if currEval[2] == True :
                     x_best = s[:]                       #find the best member and keep track of that solution
                     f_best = currEval                   #and store its evaluation 
-                else :
-                        temp_neigbor = neighborhood(s[:])                       #find the best member and keep track of that solution
-                        for r in temp_neigbor: 
-                            temp_currEval = evaluate(r)[:]
-                            #print(currEval)
-                            if temp_currEval[0] > f_best[0]:  # solution is feasible   
-                                if temp_currEval[2] == True :
-                                    x_best = r[:]                       #find the best member and keep track of that solution
-                                    f_best = temp_currEval 
+                    
+        solutionsChecked = solutionsChecked + 1
         
         if f_best == f_curr:               #if there were no improving solutions in the neighborhood
             done = 1
