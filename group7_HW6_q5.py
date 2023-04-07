@@ -118,7 +118,7 @@ def initial_solution(n, weights, maxWeight):
     done = False
     while not done:
         prevx = x[:]    # stores previous iterations solution
-        index = myPRNG.randint(0,n)
+        index = myPRNG.randint(0,n-1)
         #index = random.randint(0,n-1)
         x[index] = 1
         # check weights
@@ -135,10 +135,11 @@ def initial_solution(n, weights, maxWeight):
 
 
 
-def bestImprovement():
+def RandomWalk(P):
     print("Initiating local search with best improvement .........\n")
     #varaible to record the number of solutions evaluated
     solutionsChecked = 0
+    
     
     x_curr = initial_solution(n, weights, maxWeight)  #x_curr will hold the current solution 
     x_best = x_curr[:]           #x_best will hold the best solution 
@@ -150,24 +151,36 @@ def bestImprovement():
         
     while done == 0:
                 
-        Neighborhood = neighborhood(x_curr)   #create a list of all neighbors in the neighborhood of x_curr
         
+
+            
+        Neighborhood = neighborhood(x_curr)   #create a list of all neighbors in the neighborhood of x_curr
+        Neighbor_ev = []
+        Feasible_Neighbor =[]
         for s in Neighborhood:                #evaluate every member in the neighborhood of x_curr
             currEval = evaluate(s)[:]
-            #print(currEval)
-            if currEval[0] > f_best[0]:  # solution is feasible   
-                if currEval[2] == True :
-                    x_best = s[:]                       #find the best member and keep track of that solution
-                    f_best = currEval                   #and store its evaluation 
-                    
+            if currEval[2] == True:
+                Feasible_Neighbor.append(s)
+                Neighbor_ev.append(currEval[0])
+            
+            
+        topidx = Neighbor_ev.index(max(Neighbor_ev))       # getting top     
         solutionsChecked = solutionsChecked + 1
+        rnd = myPRNG.random()
+        #if rnd > P:
         
-        if f_best == f_curr:               #if there were no improving solutions in the neighborhood
+        if f_curr[0] >= Neighbor_ev[topidx]:               #if there were no improving solutions in the neighborhood
+            f_best = f_curr[:]
+            x_best = x_curr[:]
             done = 1
         else:
-            x_curr = x_best[:]         #else: move to the neighbor solution and continue
-            f_curr = f_best[:]         #evalute the current solution
-                
+            if rnd > P:
+                x_curr = (Feasible_Neighbor[topidx])[:]        #else: move to the neighbor solution and continue
+                f_curr = evaluate(x_curr)[:]         #evalute the current solution   
+            else:
+                x_curr = (Feasible_Neighbor[myPRNG.randint(0,len(Neighbor_ev)-1)])[:]        #else: move to the neighbor solution and continue
+                f_curr = evaluate(x_curr)[:]         #evalute the current solution 
+                    
         
     print ("\nFinal number of solutions checked: ", solutionsChecked)
     print ("Best value found: ", f_best[0])
@@ -182,4 +195,4 @@ def bestImprovement():
     return(results)    
 
 
-output = bestImprovement()
+output = RandomWalk(0.5)

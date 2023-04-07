@@ -104,6 +104,7 @@ def neighborhood(x):
                         nbrhood.append(temp1[:])
       
     return nbrhood
+          
 
 
 #create the initial solution
@@ -118,7 +119,7 @@ def initial_solution(n, weights, maxWeight):
     done = False
     while not done:
         prevx = x[:]    # stores previous iterations solution
-        index = myPRNG.randint(0,n)
+        index = myPRNG.randint(0,n-1)
         #index = random.randint(0,n-1)
         x[index] = 1
         # check weights
@@ -181,5 +182,28 @@ def bestImprovement():
                       "Total Number of Items selected": np.sum(x_best)}
     return(results)    
 
+#------------------------------------
+#---------randomRestarts-------------
+#------------------------------------
 
-output = bestImprovement()
+def randomRestarts(k_i):
+    print("Initiating local search with Random Restarts using best improvement .........\n")
+    x_bestRandomRestart = {}
+
+    for i in range(k_i):
+        print ("--------------Iteration of random restart = ", i+1)
+        x_curr_bestImprovement = {}
+        if i == 0:
+            x_bestRandomRestart = bestImprovement()
+        else:
+            x_curr_bestImprovement = bestImprovement()
+            if x_bestRandomRestart["Value"] < x_curr_bestImprovement ["Value"]:
+                x_bestRandomRestart = x_curr_bestImprovement.copy()
+    print ("\nFinal number of k restarts: ", k_i)
+    print ("Best value found: ", x_bestRandomRestart["Value"])
+    print ("Weight is: ", x_bestRandomRestart["Weight"])
+    print ("Total number of items selected: ", x_bestRandomRestart["Total Number of Items selected"])
+    print ("Best solution random restarts: ", x_bestRandomRestart)    
+            
+
+output = randomRestarts(20)

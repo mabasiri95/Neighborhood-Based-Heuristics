@@ -118,8 +118,8 @@ def initial_solution(n, weights, maxWeight):
     done = False
     while not done:
         prevx = x[:]    # stores previous iterations solution
-        #index = myPRNG.randint(0,n)
-        index = random.randint(0,n-1)
+        index = myPRNG.randint(0,n-1)
+        #index = random.randint(0,n-1)
         x[index] = 1
         # check weights
         solnWeight = np.dot(np.array(x), np.array(weights))
@@ -164,16 +164,18 @@ def bestImprovement():
         solutionsChecked = solutionsChecked + 1
         
         if f_curr[0] >= Neighbor_ev[top4[3]]:               #if there were no improving solutions in the neighborhood
+            f_best = f_curr[:]
+            x_best = x_curr[:]
             done = 1
         else:
-            rnd = random.random()
-            if rnd > 1:
+            rnd = myPRNG.random()
+            if rnd > 0.9:
                 x_curr = (Feasible_Neighbor[top4[0]])[:]        #else: move to the neighbor solution and continue
                 f_curr = evaluate(x_curr)[:]         #evalute the current solution
-            elif rnd > 1:
+            elif rnd > 0.7:
                 x_curr = (Feasible_Neighbor[top4[1]])[:]        #else: move to the neighbor solution and continue
                 f_curr = evaluate(x_curr)[:]         #evalute the current solution  
-            elif rnd > 1:
+            elif rnd > 0.4:
                 x_curr = (Feasible_Neighbor[top4[2]])[:]        #else: move to the neighbor solution and continue
                 f_curr = evaluate(x_curr)[:]         #evalute the current solution 
             else:
