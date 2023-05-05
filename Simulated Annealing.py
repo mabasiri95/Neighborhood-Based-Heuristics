@@ -133,13 +133,19 @@ def initial_solution(n, weights, maxWeight):
             
     return prevx
 
+def CauchyCooling(t,k):
+    t = t/(1+k)
+    return t
 
+def Cooling(t,k):
+    alpha = 0.95
+    t = alpha * t
+    return t
 
 def SimulatedAnnealing():
     print("Initiating local search with best improvement .........\n")
     #varaible to record the number of solutions evaluated
     solutionsChecked = 0
-    
     
     x_curr = initial_solution(n, weights, maxWeight)  #x_curr will hold the current solution 
     x_best = x_curr[:]           #x_best will hold the best solution 
@@ -147,48 +153,43 @@ def SimulatedAnnealing():
     f_best = f_curr[:]
     
     #begin local search overall logic ----------------
-    done = 0
-    M_k = 1
+    M_k = 50
+    k = 0
+    t = max(value)
+    
+    while k != 1000:
         
-    while done != 10:
+        t = Cooling(t, k)
+        k = k + 1
         m = 0
-        P = 0.50
         while m < M_k:
             m = m + 1
             Neighborhood = neighborhood(x_curr)   #create a list of all neighbors in the neighborhood of x_curr
-            Neighbor_ev = []
-            Feasible_Neighbor =[]
-            for s in Neighborhood:                #evaluate every member in the neighborhood of x_curr
-                currEval = evaluate(s)[:]
-                if currEval[2] == True:
-                    Feasible_Neighbor.append(s)
-                    Neighbor_ev.append(currEval[0])
-                
-                
-            topidx = Neighbor_ev.index(max(Neighbor_ev))       # getting top     
+
+            while True:   ## Getting a feasible random neighborhood
+                x_test = (Neighborhood[myPRNG.randint(0,len(Neighborhood)-1)])[:]
+                f_test = evaluate(x_test)[:] 
+                if f_test[2]==True:
+                    break
+
             solutionsChecked = solutionsChecked + 1
             rnd = myPRNG.random()
-            #if rnd > P:
             
-            if f_curr[0] >   Neighbor_ev[topidx] and f_best[0] <= f_curr[0]:               #if there were no improving solutions in the neighborhood
+            delta = abs(f_test[0]-f_curr[0])
+            P = np.exp(-(delta)/t)
+            
+            if f_test[0] > f_curr[0]:   # accept if the move is good
+                x_curr = x_test[:]        # move to the neighbor solution and continue
+                f_curr = f_test[:]         #evalute the current solution 
+            else:
+                if rnd < P:   # accepting the bad move with a probability
+                    x_curr = x_test[:]        # move to the neighbor solution and continue
+                    f_curr = f_test[:]         #evalute the current solution 
+                    
+            if f_best[0] < f_curr[0]:
                 f_best = f_curr[:]
                 x_best = x_curr[:]
-                done = done + 1
-            
-            if rnd > P:
-                x_curr = (Feasible_Neighbor[topidx])[:]        #else: move to the neighbor solution and continue
-                f_curr = evaluate(x_curr)[:]         #evalute the current solution 
-                if f_best[0] < f_curr[0]:
-                    f_best = f_curr[:]
-                    x_best = x_curr[:]
-            else:
-                x_curr = (Feasible_Neighbor[myPRNG.randint(0,len(Neighbor_ev)-1)])[:]        #else: move to the neighbor solution and continue
-                f_curr = evaluate(x_curr)[:]         #evalute the current solution 
-                if f_best[0] < f_curr[0]:
-                    f_best = f_curr[:]
-                    x_best = x_curr[:]
-        
-        
+               
     print ("\nFinal number of solutions checked: ", solutionsChecked)
     print ("Best value found: ", f_best[0])
     print ("Weight is: ", f_best[1])

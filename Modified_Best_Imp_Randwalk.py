@@ -23,26 +23,25 @@ import random
 
 
 #to setup a random number generator, we will specify a "seed" value
+seed = 5113
+myPRNG = Random(seed)
+#to setup a random number generator, we will specify a "seed" value
 #need this for the random number generation -- do not change
 seed = 51132023
 myPRNG = Random(seed)
-
-#to get a random number between 0 and 1, use this:             myPRNG.random()
-#to get a random number between lwrBnd and upprBnd, use this:  myPRNG.uniform(lwrBnd,upprBnd)
+#to get a random number between 0 and 1, use this: myPRNG.random()
+#to get a random number between lwrBnd and upprBnd, use this: myPRNG.uniform(lwrBnd,upprBnd)
 #to get a random integer between lwrBnd and upprBnd, use this: myPRNG.randint(lwrBnd,upprBnd)
-
 #number of elements in a solution
 n = 150
-
 #create an "instance" for the knapsack problem
 value = []
 for i in range(0,n):
-    value.append(round(myPRNG.triangular(5,1000,200),1))
-    
+    #value.append(round(myPRNG.expovariate(1/500)+1,1))
+    value.append(round(myPRNG.triangular(150,2000,500),1))
 weights = []
 for i in range(0,n):
-    weights.append(round(myPRNG.triangular(10,200,60),1))
-    
+    weights.append(round(myPRNG.triangular(8,300,95),1))
 #define max weight for the knapsack
 maxWeight = 2500
 
@@ -152,7 +151,7 @@ def SimulatedAnnealing():
         
     while done != 10:
         m = 0
-        P = 0.50
+        P = 0.70
         while m < M_k:
             m = m + 1
             Neighborhood = neighborhood(x_curr)   #create a list of all neighbors in the neighborhood of x_curr
